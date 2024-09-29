@@ -45,10 +45,16 @@ func main() {
 	}
 
 	for _, client := range clients {
-		jobs, err := connections.PropsByClientID(db, client.ClientID)
+		props, err := connections.PropsByClientID(db, client.ClientID)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("Properties found: %v", jobs)
+		for _, prop := range props {
+			jobs, err := connections.GetJobsFromPropertyID(db, prop)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("Found jobs %v\n", jobs)
+		}
 	}
 }
