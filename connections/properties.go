@@ -5,12 +5,8 @@ import (
 	"fmt"
 )
 
-type Property struct {
-	PropID int64
-}
-
-func PropsByClientID(db *sql.DB, clientID int64) ([]Property, error) {
-	var properties []Property
+func PropsByClientID(db *sql.DB, clientID int64) ([]int64, error) {
+	var properties []int64
 
 	rows, err := db.Query("SELECT PropID FROM `Properties` WHERE `ClientID`=? LIMIT 10", clientID)
 	if err != nil {
@@ -24,8 +20,8 @@ func PropsByClientID(db *sql.DB, clientID int64) ([]Property, error) {
 	}()
 
 	for rows.Next() {
-		var property Property
-		if err := rows.Scan(&property.PropID); err != nil {
+		var property int64
+		if err := rows.Scan(&property); err != nil {
 			return nil, fmt.Errorf("propsByClientID %q: %v", clientID, err)
 		}
 		properties = append(properties, property)
