@@ -1,11 +1,13 @@
 package main
 
 import (
+	"blog.davetheitguy/remove-clients/connections"
 	"database/sql"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
 	"log"
 	"os"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
@@ -36,4 +38,17 @@ func main() {
 		log.Fatal(pingErr)
 	}
 	fmt.Println("Successfully connected to database!")
+
+	clients, err := connections.ClientsByName(db, "Connells")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, client := range clients {
+		jobs, err := connections.PropsByClientID(db, client.ClientID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Properties found: %v", jobs)
+	}
 }
