@@ -8,7 +8,7 @@ import (
 func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]int64, error) {
 	var jobs []int64
 
-	rows, err := db.Query("SELECT SubID FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL LIMIT 10", jobId)
+	rows, err := db.Query("SELECT SubID FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL", jobId)
 	if err != nil {
 		return nil, fmt.Errorf("jobsByPropID %q: %v", jobId, err)
 	}

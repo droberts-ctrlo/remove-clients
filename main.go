@@ -54,7 +54,16 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("Found jobs %v\n", jobs)
+			for _, job := range jobs {
+				reports, err := connections.GetReportDataFromSubID(db, job)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				for _, report := range reports {
+					fmt.Printf("%s: %s\n", report.Name, report.Value)
+				}
+			}
 		}
 	}
 }
