@@ -6,8 +6,8 @@ import (
 )
 
 type Client struct {
-	ClientID int64
-	Name     string
+	Id   int64
+	Name string
 }
 
 func ClientsByName(db *sql.DB, name string) ([]Client, error) {
@@ -26,7 +26,7 @@ func ClientsByName(db *sql.DB, name string) ([]Client, error) {
 
 	for rows.Next() {
 		var client Client
-		if err := rows.Scan(&client.ClientID, &client.Name); err != nil {
+		if err := rows.Scan(&client.Id, &client.Name); err != nil {
 			return nil, fmt.Errorf("clientsByName %q: %v", name, err)
 		}
 		clients = append(clients, client)

@@ -5,10 +5,15 @@ import (
 	"fmt"
 )
 
-func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]int64, error) {
-	var jobs []int64
+type JobData struct {
+	ID    int64
+	SubID int64
+}
 
-	rows, err := db.Query("SELECT SubID FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL", jobId)
+func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]JobData, error) {
+	var jobs []JobData
+
+	rows, err := db.Query("SELECT JobID, SubID FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL", jobId)
 	if err != nil {
 		return nil, fmt.Errorf("jobsByPropID %q: %v", jobId, err)
 	}
@@ -20,13 +25,13 @@ func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]int64, error) {
 	}()
 
 	for rows.Next() {
-		var subID int64
+		var job JobData
 
-		if err = rows.Scan(&subID); err != nil {
+		if err = rows.Scan(&job.ID, &job.SubID); err != nil {
 			return nil, fmt.Errorf("jobsByPropID %q: %v", jobId, err)
 		}
 
-		jobs = append(jobs, subID)
+		jobs = append(jobs, job)
 	}
 
 	return jobs, nil

@@ -45,17 +45,17 @@ func main() {
 	}
 
 	for _, client := range clients {
-		props, err := connections.PropsByClientID(db, client.ClientID)
+		props, err := connections.PropsByClientID(db, client.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
 		for _, prop := range props {
-			jobs, err := connections.GetJobsFromPropertyID(db, prop)
+			jobs, err := connections.GetJobsFromPropertyID(db, prop.PropID)
 			if err != nil {
 				log.Fatal(err)
 			}
 			for _, job := range jobs {
-				reports, err := connections.GetReportDataFromSubID(db, job)
+				reports, err := connections.GetReportDataFromSubID(db, job.SubID)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -64,6 +64,15 @@ func main() {
 					fmt.Printf("%s: %s\n", report.Name, report.Value)
 				}
 			}
+		}
+
+		pdfs, err := connections.GetPdfsByClientId(db, client.Id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, pdf := range pdfs {
+			fmt.Printf("File: %s\n", pdf.FileName)
 		}
 	}
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type ReportData struct {
+	ID    int64
 	Name  string
 	Value string
 }
@@ -14,7 +15,7 @@ type ReportData struct {
 func GetReportDataFromSubID(db *sql.DB, subId int64) ([]ReportData, error) {
 	var reports []ReportData
 
-	rows, err := db.Query("SELECT Name, Value FROM `ExtFormData` WHERE subId = ?", subId)
+	rows, err := db.Query("SELECT FormDataID, Name, Value FROM `ExtFormData` WHERE subId = ?", subId)
 	if err != nil {
 		return nil, fmt.Errorf("getReportDataFromID %d: %v", subId, err)
 	}
@@ -28,7 +29,7 @@ func GetReportDataFromSubID(db *sql.DB, subId int64) ([]ReportData, error) {
 
 	for rows.Next() {
 		var report ReportData
-		if err := rows.Scan(&report.Name, &report.Value); err != nil {
+		if err := rows.Scan(&report.ID, &report.Name, &report.Value); err != nil {
 			return nil, fmt.Errorf("getReportDataFromID %d: %v", subId, err)
 		}
 
