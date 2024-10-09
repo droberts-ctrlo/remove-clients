@@ -33,3 +33,10 @@ func PropsByClientID(db *sql.DB, clientID int64) ([]PropertyData, error) {
 
 	return properties, nil
 }
+
+func DeleteProperty(db *sql.DB, propID int64) error {
+	if _, err := db.Exec("DELETE FROM `Properties` WHERE `PropID`=?", propID); err != nil {
+		return fmt.Errorf("DeleteProperty %q: %v", propID, err)
+	}
+	return nil
+}

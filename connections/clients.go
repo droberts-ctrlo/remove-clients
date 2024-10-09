@@ -34,3 +34,10 @@ func ClientsByName(db *sql.DB, name string) ([]Client, error) {
 
 	return clients, nil
 }
+
+func deleteClients(db *sql.DB, id int64) error {
+	if _, err := db.Exec("DELETE FROM `Clients` WHERE `ID`=?", id); err != nil {
+		return fmt.Errorf("deleteClients %q: %v", id, err)
+	}
+	return nil
+}

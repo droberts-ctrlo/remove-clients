@@ -36,3 +36,10 @@ func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]JobData, error) {
 
 	return jobs, nil
 }
+
+func DeleteJobs(db *sql.DB, jobId int64) error {
+	if _, err := db.Exec("DELETE FROM `Jobs` WHERE `JobID`=?", jobId); err != nil {
+		return fmt.Errorf("jobsByPropID %q: %v", jobId, err)
+	}
+	return nil
+}

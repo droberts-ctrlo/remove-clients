@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 )
 
 type ReportData struct {
@@ -37,4 +39,17 @@ func GetReportDataFromSubID(db *sql.DB, subId int64) ([]ReportData, error) {
 	}
 
 	return reports, nil
+}
+
+func DeleteReportData(db *sql.DB, data ReportData) error {
+	if _, err := db.Exec("DELETE FROM `ExtFormData` WHERE FormDataID = ?", data.ID); err != nil {
+		return fmt.Errorf("deleteReportData: %v", err)
+	}
+	if strings.HasSuffix(data.Value, ".jpg") || strings.HasSuffix(data.Value, ".jpeg") {
+		location := "E:\\Sites\\Portal\\ImageStore\\" + data.Value
+		if err := os.Remove(location); err != nil {
+			return fmt.Errorf("deleteReportData: %v", err)
+		}
+	}
+	return nil
 }
