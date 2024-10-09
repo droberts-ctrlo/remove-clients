@@ -1,11 +1,12 @@
 package main
 
 import (
-	"blog.davetheitguy/remove-clients/connections"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
+
+	"blog.davetheitguy/remove-clients/connections"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -56,6 +57,14 @@ func main() {
 			}
 			for _, job := range jobs {
 				reports, err := connections.GetReportDataFromSubID(db, job.SubID)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				for _, report := range reports {
+					fmt.Printf("%s: %s\n", report.Name, report.Value)
+				}
+				reports, err = connections.GetReportDataFromSubID(db, job.SubID2)
 				if err != nil {
 					log.Fatal(err)
 				}

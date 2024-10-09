@@ -8,12 +8,13 @@ import (
 type JobData struct {
 	ID    int64
 	SubID int64
+	SubID2 int64
 }
 
 func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]JobData, error) {
 	var jobs []JobData
 
-	rows, err := db.Query("SELECT JobID, SubID FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL", jobId)
+	rows, err := db.Query("SELECT JobID, SubID, SubID2 FROM `Jobs` WHERE `PropID`=? AND NOT `SubID` IS NULL", jobId)
 	if err != nil {
 		return nil, fmt.Errorf("jobsByPropID %q: %v", jobId, err)
 	}
@@ -27,7 +28,7 @@ func GetJobsFromPropertyID(db *sql.DB, jobId int64) ([]JobData, error) {
 	for rows.Next() {
 		var job JobData
 
-		if err = rows.Scan(&job.ID, &job.SubID); err != nil {
+		if err = rows.Scan(&job.ID, &job.SubID, &job.SubID2); err != nil {
 			return nil, fmt.Errorf("jobsByPropID %q: %v", jobId, err)
 		}
 
