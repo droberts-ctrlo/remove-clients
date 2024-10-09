@@ -70,9 +70,20 @@ func main() {
 				}
 
 				for _, report := range reports {
-					fmt.Printf("%s: %s\n", report.Name, report.Value)
+					if err := connections.DeleteReportData(db, report); err != nil {
+						log.Fatal(err)
+					}
+					fmt.Printf("Deleted: %s: %s\n", report.Name, report.Value)
 				}
+				if err := connections.DeleteJobs(db, job.ID); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("Deleted Job: %d\n", job.ID)
 			}
+			if err := connections.DeleteProperty(db, prop.PropID); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("Deleted Property: %d\n", prop.PropID)
 		}
 
 		pdfs, err := connections.GetPdfsByClientId(db, client.Id)
@@ -81,7 +92,10 @@ func main() {
 		}
 
 		for _, pdf := range pdfs {
-			fmt.Printf("File: %s\n", pdf.FileName)
+			if err := connections.DeletePDF(db, pdf); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("Deleted PDF: %v\n", pdf)
 		}
 	}
 }
