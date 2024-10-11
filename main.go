@@ -40,62 +40,15 @@ func main() {
 	}
 	fmt.Println("Successfully connected to database!")
 
-	clients, err := connections.ClientsByName(db, "Connells")
+	pdfs, err := connections.GetPdfs(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, client := range clients {
-		props, err := connections.PropsByClientID(db, client.Id)
-		if err != nil {
+	for _, pdf := range pdfs {
+		if err := connections.DeletePDF(db, pdf); err != nil {
 			log.Fatal(err)
 		}
-		for _, prop := range props {
-			jobs, err := connections.GetJobsFromPropertyID(db, prop.PropID)
-			if err != nil {
-				log.Fatal(err)
-			}
-			for _, job := range jobs {
-				reports, err := connections.GetReportDataFromSubID(db, job.SubID)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				for _, report := range reports {
-					fmt.Printf("%s: %s\n", report.Name, report.Value)
-				}
-				reports, err = connections.GetReportDataFromSubID(db, job.SubID2)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				for _, report := range reports {
-					if err := connections.DeleteReportData(db, report); err != nil {
-						log.Fatal(err)
-					}
-					fmt.Printf("Deleted: %s: %s\n", report.Name, report.Value)
-				}
-				if err := connections.DeleteJobs(db, job.ID); err != nil {
-					log.Fatal(err)
-				}
-				fmt.Printf("Deleted Job: %d\n", job.ID)
-			}
-			if err := connections.DeleteProperty(db, prop.PropID); err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("Deleted Property: %d\n", prop.PropID)
-		}
-
-		pdfs, err := connections.GetPdfsByClientId(db, client.Id)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, pdf := range pdfs {
-			if err := connections.DeletePDF(db, pdf); err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("Deleted PDF: %v\n", pdf)
-		}
+		fmt.Printf("Deleted PDF: %v\n", pdf)
 	}
 }

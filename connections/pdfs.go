@@ -11,12 +11,12 @@ type PDFData struct {
 	FileName string
 }
 
-func GetPdfsByClientId(db *sql.DB, clientId int64) ([]PDFData, error) {
+func GetPdfs(db *sql.DB) ([]PDFData, error) {
 	var pdfs []PDFData
 
-	rows, err := db.Query("SELECT ID, FileName FROM `PDFTable` WHERE ClientID = ?", clientId)
+	rows, err := db.Query("SELECT ID, FileName FROM `PDFTable` WHERE NOT ClientID IN (SELECT ClientID FROM `Clients`)")
 	if err != nil {
-		return nil, fmt.Errorf("getPdfsByClient %d: %v", clientId, err)
+		return nil, fmt.Errorf("getPdfs: %v", err)
 	}
 
 	defer func() {
@@ -29,7 +29,7 @@ func GetPdfsByClientId(db *sql.DB, clientId int64) ([]PDFData, error) {
 		var pdf PDFData
 
 		if err := rows.Scan(&pdf.Id, &pdf.FileName); err != nil {
-			return nil, fmt.Errorf("getPdfsByClient %d: %v", clientId, err)
+			return nil, fmt.Errorf("getPdfsByClient: %v", err)
 		}
 
 		pdfs = append(pdfs, pdf)
